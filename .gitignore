@@ -1,0 +1,15 @@
+.DS_Store
+.idea/
+.vscode/
+
+# Go build/test artifacts
+*.exe
+*.test
+*.out
+*.prof
+coverage.*
+
+# Go workspace files (developers may create locally)
+go.work
+go.work.sum
+
