@@ -21,7 +21,7 @@
 在你的项目里添加依赖（建议使用已发布的 tag 版本）：
 
 ```bash
-go get github.com/ez-api/foundation@latest
+go get github.com/ez-api/foundation@v0.1.0
 ```
 
 ### JSON
