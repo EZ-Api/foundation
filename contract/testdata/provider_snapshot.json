@@ -1,0 +1,13 @@
+{
+  "id": 42,
+  "name": "p1",
+  "type": "vertex-express",
+  "base_url": "",
+  "api_key": "",
+  "google_location": "global",
+  "group": "default",
+  "models": ["gemini-3-pro-preview"],
+  "status": "active",
+  "auto_ban": true
+}
+
