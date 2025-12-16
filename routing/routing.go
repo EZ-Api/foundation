@@ -142,4 +142,3 @@ type BindingSnapshot struct {
 	UpdatedAt     int64             `json:"updated_at,omitempty"` // unix seconds
 	Upstreams     map[string]string `json:"upstreams"`            // provider_id -> upstream_model
 }
-
