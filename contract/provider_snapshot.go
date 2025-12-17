@@ -9,4 +9,3 @@ var providerSnapshotJSON []byte
 func ProviderSnapshotJSON() []byte {
 	return append([]byte(nil), providerSnapshotJSON...)
 }
-
