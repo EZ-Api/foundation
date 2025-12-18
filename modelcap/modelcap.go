@@ -41,6 +41,7 @@ type Model struct {
 	SupportsFunction   bool    `json:"supports_functions,omitempty"`
 	SupportsToolChoice bool    `json:"supports_tool_choice,omitempty"`
 	SupportsFim        bool    `json:"supports_fim,omitempty"`
+	SupportsStream     bool    `json:"supports_stream,omitempty"`
 	MaxOutputTokens    int     `json:"max_output_tokens,omitempty"`
 }
 
