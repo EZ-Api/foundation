@@ -16,6 +16,8 @@
 - `github.com/ez-api/foundation/requestid`：request_id 生成与 header 解析（X-Request-ID）。
 - `github.com/ez-api/foundation/tokenhash`：跨服务稳定的 token hash（sha256 hex）。
 - `github.com/ez-api/foundation/group`：routing group 默认值与归一化（空 -> `default`）。
+- `github.com/ez-api/foundation/modelcap`：模型能力定义与归一化。
+- `github.com/ez-api/foundation/routing`：路由绑定与快照结构。
 - `github.com/ez-api/foundation/contract`：DP/CP 契约样例（golden JSON，通过 go:embed 发布）。
 
 ## 快速开始
