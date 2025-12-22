@@ -27,7 +27,7 @@
 在你的项目里添加依赖（建议使用已发布的 tag 版本）：
 
 ```bash
-go get github.com/ez-api/foundation@v0.1.0
+go get github.com/ez-api/foundation@v0.3.0
 ```
 
 ### JSON
@@ -56,7 +56,7 @@ DP/CP 分离强调的是运行时职责与依赖边界；`foundation` 只提供�
 
 ## 发布策略
 
-- 使用语义化版本发布（git tag）：例如 `v0.1.0`、`v0.2.0`。
+- 使用语义化版本发布（git tag）：例如 `v0.3.0`、`v0.4.0`。
 - `ez-api`/`balancer` 在 `go.mod` 中锁定到明确版本，保证行为可复现。
 
 ## 本地多仓联调（可选）
