@@ -130,15 +130,24 @@ func ResolveUpstreamModel(selectorType SelectorType, selectorValue string, publi
 	}
 }
 
-// BindingSnapshot is the DP-consumed snapshot for "(namespace, public_model) -> route_group -> provider -> upstream_model".
-// DP hot path should only do O(1) map lookups.
-type BindingSnapshot struct {
-	Namespace     string            `json:"namespace"`
-	PublicModel   string            `json:"public_model"`
+// BindingCandidate represents a single provider group candidate for a bindingKey.
+type BindingCandidate struct {
+	GroupID       uint              `json:"group_id"`
 	RouteGroup    string            `json:"route_group"`
+	Weight        int               `json:"weight,omitempty"`
 	SelectorType  string            `json:"selector_type,omitempty"`
 	SelectorValue string            `json:"selector_value,omitempty"`
 	Status        string            `json:"status,omitempty"`
-	UpdatedAt     int64             `json:"updated_at,omitempty"` // unix seconds
-	Upstreams     map[string]string `json:"upstreams"`            // provider_id -> upstream_model
+	Error         string            `json:"error,omitempty"` // config_error | no_provider
+	Upstreams     map[string]string `json:"upstreams"`       // provider_id -> upstream_model
+}
+
+// BindingSnapshot is the DP-consumed snapshot for "(namespace, public_model) -> candidates -> provider -> upstream_model".
+// DP hot path should only do O(1) map lookups.
+type BindingSnapshot struct {
+	Namespace   string             `json:"namespace"`
+	PublicModel string             `json:"public_model"`
+	Status      string             `json:"status,omitempty"`
+	UpdatedAt   int64              `json:"updated_at,omitempty"` // unix seconds
+	Candidates  []BindingCandidate `json:"candidates"`
 }

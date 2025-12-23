@@ -1,13 +1,14 @@
 {
   "id": 42,
-  "name": "p1",
+  "name": "pg1#42",
   "type": "vertex-express",
   "base_url": "",
-  "api_key": "",
+  "api_key": "sk-123",
+  "google_project": "proj-1",
   "google_location": "global",
+  "group_id": 7,
   "group": "default",
   "models": ["gemini-3-pro-preview"],
   "status": "active",
   "auto_ban": true
 }
-
