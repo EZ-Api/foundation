@@ -12,4 +12,6 @@ coverage.*
 # Go workspace files (developers may create locally)
 go.work
 go.work.sum
-
+openspec/
+AGENTS.md
+.kilocode/
