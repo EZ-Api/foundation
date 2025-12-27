@@ -7,6 +7,10 @@ const (
 	TypeCompatible    = "compatible"
 	TypeAnthropic     = "anthropic"
 	TypeClaude        = "claude"
+	TypeClaudeCode    = "claude-code"
+	TypeCodex         = "codex"
+	TypeGeminiCLI     = "gemini-cli"
+	TypeAntigravity   = "antigravity"
 	TypeGemini        = "gemini"
 	TypeGoogle        = "google"
 	TypeAIStudio      = "aistudio"
@@ -53,4 +57,3 @@ func DefaultGoogleLocation(providerType, location string) string {
 func GoogleFamilyTypes() []string {
 	return []string{TypeGemini, TypeGoogle, TypeAIStudio, TypeVertex, TypeVertexExpress}
 }
-
