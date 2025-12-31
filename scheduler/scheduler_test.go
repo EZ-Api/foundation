@@ -2,6 +2,7 @@ package scheduler
 
 import (
 	"context"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -159,6 +160,75 @@ func TestSchedulerWithLocation(t *testing.T) {
 
 	if s.location != loc {
 		t.Error("location not set correctly")
+	}
+}
+
+func TestSchedulerBaseContextValue(t *testing.T) {
+	type ctxKey string
+	key := ctxKey("test-key")
+	baseCtx := context.WithValue(context.Background(), key, "value")
+	s := New(WithBaseContext(baseCtx))
+
+	ch := make(chan any, 1)
+	err := s.Every("ctx-job", 100*time.Millisecond, func(ctx context.Context) {
+		select {
+		case ch <- ctx.Value(key):
+		default:
+		}
+	})
+	if err != nil {
+		t.Fatalf("failed to schedule job: %v", err)
+	}
+
+	s.Start()
+	defer s.Stop()
+
+	select {
+	case v := <-ch:
+		if v != "value" {
+			t.Errorf("expected context value 'value', got %v", v)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("job did not run in time")
+	}
+}
+
+func TestSchedulerStopCancelsJobContext(t *testing.T) {
+	s := New()
+
+	started := make(chan struct{})
+	done := make(chan struct{})
+	var startedOnce sync.Once
+	var doneOnce sync.Once
+
+	err := s.Every("ctx-cancel-job", 100*time.Millisecond, func(ctx context.Context) {
+		startedOnce.Do(func() { close(started) })
+		<-ctx.Done()
+		doneOnce.Do(func() { close(done) })
+	})
+	if err != nil {
+		t.Fatalf("failed to schedule job: %v", err)
+	}
+
+	s.Start()
+
+	select {
+	case <-started:
+	case <-time.After(2 * time.Second):
+		t.Fatal("job did not start in time")
+	}
+
+	stopCtx := s.Stop()
+	select {
+	case <-stopCtx.Done():
+	case <-time.After(2 * time.Second):
+		t.Fatal("scheduler stop did not complete in time")
+	}
+
+	select {
+	case <-done:
+	default:
+		t.Error("expected job context to be canceled on Stop()")
 	}
 }
 

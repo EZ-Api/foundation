@@ -22,6 +22,17 @@ type Job struct {
 // Option configures the Scheduler.
 type Option func(*Scheduler)
 
+// WithBaseContext sets the base context used for all scheduled jobs.
+// A cancelable child context is created on Start() and canceled on Stop().
+func WithBaseContext(ctx context.Context) Option {
+	return func(s *Scheduler) {
+		if ctx == nil {
+			return
+		}
+		s.baseCtx = ctx
+	}
+}
+
 // WithLogger sets a custom logger for the scheduler.
 func WithLogger(logger *slog.Logger) Option {
 	return func(s *Scheduler) {
@@ -52,6 +63,9 @@ type Scheduler struct {
 	jobs          map[string]Job
 	mu            sync.RWMutex
 	started       bool
+	baseCtx       context.Context
+	runCtx        context.Context
+	runCancel     context.CancelFunc
 }
 
 // New creates a new Scheduler with the given options.
@@ -59,6 +73,7 @@ func New(opts ...Option) *Scheduler {
 	s := &Scheduler{
 		logger:   slog.Default(),
 		location: time.UTC,
+		baseCtx:  context.Background(),
 		jobs:     make(map[string]Job),
 	}
 
@@ -92,7 +107,7 @@ func (s *Scheduler) Every(name string, interval time.Duration, fn func(ctx conte
 
 	// Wrap the function to include context
 	wrappedFn := func() {
-		ctx := context.Background()
+		ctx := s.jobContext()
 		fn(ctx)
 	}
 
@@ -119,7 +134,7 @@ func (s *Scheduler) Cron(name string, expr string, fn func(ctx context.Context))
 	defer s.mu.Unlock()
 
 	wrappedFn := func() {
-		ctx := context.Background()
+		ctx := s.jobContext()
 		fn(ctx)
 	}
 
@@ -175,6 +190,7 @@ func (s *Scheduler) Start() {
 		return
 	}
 
+	s.runCtx, s.runCancel = context.WithCancel(s.baseContext())
 	s.cron.Start()
 	s.started = true
 	s.logger.Info("scheduler started", "jobs", len(s.jobs))
@@ -183,16 +199,22 @@ func (s *Scheduler) Start() {
 // Stop stops the scheduler and waits for running jobs to complete.
 func (s *Scheduler) Stop() context.Context {
 	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	if !s.started {
+		s.mu.Unlock()
 		ctx, cancel := context.WithCancel(context.Background())
 		cancel()
 		return ctx
 	}
 
 	s.started = false
+	cancel := s.runCancel
+	s.runCancel = nil
+	s.mu.Unlock()
+
 	s.logger.Info("scheduler stopping")
+	if cancel != nil {
+		cancel()
+	}
 	return s.cron.Stop()
 }
 
@@ -201,6 +223,26 @@ func (s *Scheduler) Running() bool {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	return s.started
+}
+
+func (s *Scheduler) baseContext() context.Context {
+	if s.baseCtx != nil {
+		return s.baseCtx
+	}
+	return context.Background()
+}
+
+func (s *Scheduler) jobContext() context.Context {
+	s.mu.RLock()
+	ctx := s.runCtx
+	if ctx == nil {
+		ctx = s.baseCtx
+	}
+	s.mu.RUnlock()
+	if ctx != nil {
+		return ctx
+	}
+	return context.Background()
 }
 
 // cronLogAdapter adapts slog.Logger to cron.Logger interface.
