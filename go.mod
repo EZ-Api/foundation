@@ -6,6 +6,7 @@ require (
 	github.com/bytedance/sonic v1.14.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.34.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

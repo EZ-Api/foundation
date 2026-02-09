@@ -18,7 +18,9 @@
 - `github.com/ez-api/foundation/group`：routing group 默认值与归一化（空 -> `default`）。
 - `github.com/ez-api/foundation/modelcap`：模型能力定义与归一化。
 - `github.com/ez-api/foundation/routing`：路由绑定与快照结构。
-- `github.com/ez-api/foundation/contract`：DP/CP 契约样例（golden JSON，通过 go:embed 发布）。
+- `github.com/ez-api/foundation/contract`：DP/CP 契约样例与入口协议常量（golden JSON + 生成式 Responses ingress 契约）。
+
+`contract` 包的生成流程与职责边界见：`contract/README.md`。
 
 ## 快速开始
 
