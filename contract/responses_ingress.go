@@ -25,7 +25,9 @@ const (
 )
 
 var responsesPassThroughRequestFields = map[string]struct{}{
+	"conversation":          {},
 	"frequency_penalty":     {},
+	"include":               {},
 	"input":                 {},
 	"instructions":          {},
 	"max_completion_tokens": {},
@@ -34,22 +36,21 @@ var responsesPassThroughRequestFields = map[string]struct{}{
 	"model":                 {},
 	"parallel_tool_calls":   {},
 	"presence_penalty":      {},
+	"previous_response_id":  {},
+	"reasoning":             {},
 	"seed":                  {},
 	"stream":                {},
 	"temperature":           {},
+	"text":                  {},
 	"tool_choice":           {},
 	"tools":                 {},
 	"top_p":                 {},
+	"truncation":            {},
 	"user":                  {},
 }
 
 var responsesRejectedRequestFields = map[string]struct{}{
-	"conversation":         {},
-	"include":              {},
-	"previous_response_id": {},
-	"reasoning":            {},
-	"text":                 {},
-	"truncation":           {},
+	"messages": {},
 }
 
 func ResponsesRequestFieldDecision(field string) ResponsesFieldDecision {
